@@ -92,9 +92,9 @@ def pulisci(element):
 if __name__ == '__main__':
     logName = 'BPIC15GroundTruth'
     learn(logName,16)
-    #learn(logName, 32)
-    #learn(logName, 64)
-    #learn(logName, 128)
+    learn(logName, 32)
+    learn(logName, 64)
+    learn(logName, 128)
 
 
 
