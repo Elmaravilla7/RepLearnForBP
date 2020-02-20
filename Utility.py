@@ -3,32 +3,14 @@ from itertools import cycle
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.metrics import f1_score, roc_auc_score, normalized_mutual_info_score, adjusted_rand_score, roc_curve, auc, \
-    classification_report
+from sklearn.metrics import roc_auc_score, normalized_mutual_info_score, adjusted_rand_score, roc_curve, auc
 from sklearn.model_selection import train_test_split
 from sklearn.multiclass import OneVsRestClassifier
-from sklearn.preprocessing import LabelBinarizer, label_binarize
-from sklearn import metrics
+from sklearn.preprocessing import label_binarize
+from operator import itemgetter
 from sklearn.tree import DecisionTreeClassifier
 
 import loadXES
-
-def F1score(path1,path2):
-    df = np.asarray(pd.read_csv(path2))
-    dt=np.asarray(pd.read_csv(path1))
-    X = []
-    y = []
-    for i in df:
-        X.append(i[1])
-    for j in dt:
-        y.append(j[1])
-    X.sort()
-    y.sort()
-    if(len(y)>len(X)):
-        y=y[:len(X)]
-    if(len(X)>len(y)):
-        X=X[:len(y)]
-    return str(f1_score(X,y,average='micro'))
 
 def NMIscore(path1,path2):
     df = np.asarray(pd.read_csv(path2))
@@ -132,7 +114,6 @@ def dizionarioX(v):
                         diz[element[i][0]]=1
     return diz
 
-
 def freqNumerica(logName):
     attivita={}
     risorse={}
@@ -146,23 +127,25 @@ def freqNumerica(logName):
         r.append(res)
     for actor in loadXES.get_actors_names(logName+'.xes'):
         att.append(actor)
-    attivita=dizionario(a)
-    risorse=dizionarioX(r)
-    attori=dizionarioX(att)
+    attivita=list(sorted(dizionario(a).items(),key=itemgetter(1)))
+    attivita.reverse()
+    risorse=list(sorted(dizionarioX(r).items(),key=itemgetter(1)))
+    risorse.reverse()
+    attori=list(sorted(dizionarioX(att).items(),key=itemgetter(1)))
+    attori.reverse()
     return attivita,risorse,attori
 
-
 def test(path1,path2):
-    print("Risultato di F1Score: "+path1+' '+F1score(path1,path2))
     print("Risultato di NMIScore: "+path1+' '+ NMIscore(path1,path2))
     print("Risultato di RScore: "+path1+' '+ Rscore(path1,path2))
     print("Risultato di AUC: "+path1 +' '+ AUC(path1,path2))
 
 if __name__ == '__main__':
    logName = 'BPIC15GroundTruth'
-   path1='./output/N2VVS16HierWard.csv'
-   path2='./output/L2VVS16HierWard.csv'
+   path1='./output/G2VVST32KMeans.csv'
+   path2='./output/L2VVST32KMeans.csv'
    test(path1,path2)
+   print("Elaboro info dal log...")
    attivita,risorse,attori=freqNumerica(logName)
    print("Attività con relativa frequenza:")
    print(attivita)
@@ -170,5 +153,6 @@ if __name__ == '__main__':
    print(risorse)
    print("Attori con relativa frequenza:")
    print(attori)
+
 
 
