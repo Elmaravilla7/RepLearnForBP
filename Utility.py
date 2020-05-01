@@ -8,7 +8,7 @@ from sklearn.metrics import roc_auc_score, normalized_mutual_info_score, adjuste
 from sklearn.model_selection import train_test_split
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn.preprocessing import label_binarize
-from operator import itemgetter
+import seaborn as sns
 from sklearn.tree import DecisionTreeClassifier
 
 import loadXES
@@ -91,52 +91,6 @@ def AUC(path1,path2,lw=None):
     plt.legend(loc="lower right")
     plt.show()
     return str(roc_auc_score(y_test,y_score))
-
-
-
-def dizionario(v):
-    diz={}
-    for element in v:
-        for i in range (0,len(element)):
-            if(element[i]!='ArtificialStartTask' and element[i]!='ArtificialEndTask'):
-                if (element[i] in diz):
-                    diz[element[i]]=diz[element[i]]+1
-                else:
-                    diz[element[i]]=1
-    return diz
-
-def dizionarioX(v):
-    diz = {}
-    for element in v:
-        for i in range (0,len(element)):
-            if(element[i]!=[]):
-                if(element[i][0]!='artificial'):
-                    if (element[i][0] in diz):
-                        diz[element[i][0]]=diz[element[i][0]]+1
-                    else:
-                        diz[element[i][0]]=1
-    return diz
-
-def freqNumerica(logName):
-    attivita={}
-    risorse={}
-    attori={}
-    a=[]
-    r=[]
-    att=[]
-    for act in loadXES.get_sentences_XES(logName+'.xes'):
-        a.append(act)
-    for res in loadXES.get_resources_names(logName+'.xes'):
-        r.append(res)
-    for actor in loadXES.get_actors_names(logName+'.xes'):
-        att.append(actor)
-    attivita=list(sorted(dizionario(a).items(),key=itemgetter(1)))
-    attivita.reverse()
-    risorse=list(sorted(dizionarioX(r).items(),key=itemgetter(1)))
-    risorse.reverse()
-    attori=list(sorted(dizionarioX(att).items(),key=itemgetter(1)))
-    attori.reverse()
-    return attivita,risorse,attori
 
 
 def auc_(path1, path2, lw=None):
@@ -235,6 +189,42 @@ def test(path1,path2):
     print("Risultato di RScore: "+path1+' '+ Rscore(path1,path2))
     print("Risultato di AUC: "+path1 +' '+ AUC(path1,path2))
 
+
+def creaT(fileName):
+    data=[]
+    att,res,act=loadXES.get_sentences2_XES(fileName+".xes")
+    for i in range(0,len(att)):
+        data.append((str(att[i]),str(res[i]),str(act[i])))
+    df = pd.DataFrame(data)
+    return df
+
+def disegna(df,col,bool):
+    plt.figure(1, figsize=(20, 8))
+    plt.xticks(rotation='90')
+    sns.countplot(x=df[col], data=df, order=df[col].value_counts().iloc[:100].index)
+    if(col==0 and bool==False):
+        plt.title('Attività per frequenza')
+    elif(col==0 and bool==True):
+        plt.title('Coppie Risorse-Attori per frequenza in base alle attività')
+    elif(col==1):
+        plt.title('Risorse per frequenza')
+    elif(col==2):
+        plt.title('Attori per frequenza')
+    plt.show()
+
+def coppia(logName):
+    att,res,act=loadXES.get_sentences2_XES(logName+'.xes')
+    Nodi={}
+    pair=[]
+    for i in range (0,len(att)):
+        if(att[i] not in Nodi):
+            Nodi[att[i]]=[(res[i],act[i])]
+        else:
+            Nodi[att[i]].append((res[i],act[i]))
+        pair.append((res[i]+' '+act[i]))
+    df=pd.DataFrame(pair)
+    return df
+
 if __name__ == '__main__':
    logName = 'BPIC15GroundTruth'
    path1='./output/G2VVST32KMeans.csv'
@@ -242,14 +232,15 @@ if __name__ == '__main__':
    test(path1,path2)
    print("Genero i plot...")
    generaPlot()
-   print("Elaboro info dal log...")
-   attivita,risorse,attori=freqNumerica(logName)
-   print("Attività con relativa frequenza:")
-   print(attivita)
-   print("Risorse con relativa frequenza:")
-   print(risorse)
-   print("Attori con relativa frequenza:")
-   print(attori)
+   df1=creaT(logName)
+   disegna(df1,0,False)
+   disegna(df1,1,False)
+   disegna(df1,2,False)
+   df2=coppia(logName)
+   disegna(df2,0,True)
+
+
+
 
 
 
