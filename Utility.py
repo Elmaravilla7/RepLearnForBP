@@ -64,7 +64,7 @@ def AUC(path1,path2,lw=None):
         X=X[:len(y)]
     if (len(y) > len(X)):
         y = y[:len(X)]
-    y = label_binarize(y, classes=[0, 1, 2])
+    y = label_binarize(y, classes=[0, 1, 2, 3, 4])
     n_classes = y.shape[1]
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.5, random_state=0)
     X_train=np.asarray(X_train).reshape(-1,1)
@@ -90,7 +90,6 @@ def AUC(path1,path2,lw=None):
     plt.title('Receiver operating characteristic for multi-class data')
     plt.legend(loc="lower right")
     plt.show()
-    return str(roc_auc_score(y_test,y_score))
 
 
 def auc_(path1, path2, lw=None):
@@ -114,8 +113,7 @@ def auc_(path1, path2, lw=None):
         X = X[:len(y)]
     if (len(y) > len(X)):
         y = y[:len(X)]
-    y = label_binarize(y, classes=[0, 1, 2])
-    n_classes = y.shape[1]
+    y = label_binarize(y, classes=[0, 1, 2, 3, 4])
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=.5, random_state=0)
     X_train = np.asarray(X_train).reshape(-1, 1)
     X_test = np.asarray(X_test).reshape(-1, 1)
@@ -166,28 +164,42 @@ def plots(title, pathL2V, pathN2V, pathG2V):
     plt.show()
 
 
-def generaPlot():
+def generaPlot(bool):
     logName = 'BPIC15GroundTruth'
+    if(bool==False):
+        pathsL2VH=['./output/L2VVS16HierWard.csv','./output/L2VVS32HierWard.csv','./output/L2VVS64HierWard.csv','./output/L2VVS128HierWard.csv']
+        pathsN2VH=['./output/N2VVS16HierWard.csv','./output/N2VVS32HierWard.csv','./output/N2VVS64HierWard.csv','./output/N2VVS128HierWard.csv']
+        pathsG2VH=['./output/G2VVS16HierWard.csv','./output/G2VVS32HierWard.csv','./output/G2VVS64HierWard.csv','./output/G2VVS128HierWard.csv']
+        # PLOT PER Hierward
+        plots("PLOT PER HierWard", pathsL2VH,pathsN2VH,pathsG2VH)
+        pathsL2VK=['./output/L2VVS16KMeans.csv','./output/L2VVS32KMeans.csv','./output/L2VVS64KMeans.csv','./output/L2VVS128KMeans.csv']
+        pathsN2VK=['./output/N2VVS16KMeans.csv','./output/N2VVS32KMeans.csv','./output/N2VVS64KMeans.csv','./output/N2VVS128KMeans.csv']
+        pathsG2VK=['./output/G2VVS16KMeans.csv','./output/G2VVS32KMeans.csv','./output/G2VVS64KMeans.csv','./output/G2VVS128KMeans.csv']
+        plots("PLOT PER KMeans", pathsL2VK,pathsN2VK,pathsG2VK)
+    else:
+        pathsL2VH = ['./output/L2VVST16HierWard.csv', './output/L2VVST32HierWard.csv', './output/L2VVST64HierWard.csv',
+                     './output/L2VVST128HierWard.csv']
+        pathsN2VH = ['./output/N2VVST16HierWard.csv', './output/N2VVST32HierWard.csv', './output/N2VVST64HierWard.csv',
+                     './output/N2VVST128HierWard.csv']
+        pathsG2VH = ['./output/G2VVST16HierWard.csv', './output/G2VVST32HierWard.csv', './output/G2VVST64HierWard.csv',
+                     './output/G2VVST128HierWard.csv']
+        # PLOT PER Hierward
+        plots("PLOT PER HierWard", pathsL2VH, pathsN2VH, pathsG2VH)
+        pathsL2VK = ['./output/L2VVST16KMeans.csv', './output/L2VVST32KMeans.csv', './output/L2VVST64KMeans.csv',
+                     './output/L2VVST128KMeans.csv']
+        pathsN2VK = ['./output/N2VVST16KMeans.csv', './output/N2VVST32KMeans.csv', './output/N2VVST64KMeans.csv',
+                     './output/N2VVST128KMeans.csv']
+        pathsG2VK = ['./output/G2VVST16KMeans.csv', './output/G2VVST32KMeans.csv', './output/G2VVST64KMeans.csv',
+                     './output/G2VVST128KMeans.csv']
+        plots("PLOT PER KMeans", pathsL2VK, pathsN2VK, pathsG2VK)
 
-    pathsL2VH=['./output/L2VVS16HierWard.csv','./output/L2VVS32HierWard.csv','./output/L2VVS64HierWard.csv','./output/L2VVS128HierWard.csv']
-    pathsN2VH=['./output/N2VVS16HierWard.csv','./output/N2VVS32HierWard.csv','./output/N2VVS64HierWard.csv','./output/N2VVS128HierWard.csv']
-    pathsG2VH=['./output/G2VVS16HierWard.csv','./output/G2VVS32HierWard.csv','./output/G2VVS64HierWard.csv','./output/G2VVS128HierWard.csv']
 
-    # PLOT PER Hierward
-    plots("PLOT PER HierWard", pathsL2VH,pathsN2VH,pathsG2VH)
-
-    pathsL2VK=['./output/L2VVS16KMeans.csv','./output/L2VVS32KMeans.csv','./output/L2VVS64KMeans.csv','./output/L2VVS128KMeans.csv']
-    pathsN2VK=['./output/N2VVS16KMeans.csv','./output/N2VVS32KMeans.csv','./output/N2VVS64KMeans.csv','./output/N2VVS128KMeans.csv']
-    pathsG2VK=['./output/G2VVS16KMeans.csv','./output/G2VVS32KMeans.csv','./output/G2VVS64KMeans.csv','./output/G2VVS128KMeans.csv']
-
-
-    plots("PLOT PER KMeans", pathsL2VK,pathsN2VK,pathsG2VK)
 
 
 def test(path1,path2):
     print("Risultato di NMIScore: "+path1+' '+ NMIscore(path1,path2))
     print("Risultato di RScore: "+path1+' '+ Rscore(path1,path2))
-    print("Risultato di AUC: "+path1 +' '+ AUC(path1,path2))
+    print("Risultato di AUC: "+path1 +' '+ auc_(path1,path2))
 
 
 def creaT(fileName):
@@ -227,11 +239,18 @@ def coppia(logName):
 
 if __name__ == '__main__':
    logName = 'BPIC15GroundTruth'
-   path1='./output/G2VVST32KMeans.csv'
-   path2='./output/L2VVST32KMeans.csv'
-   test(path1,path2)
-   print("Genero i plot...")
-   generaPlot()
+   path1='./output/G2VVS32KMeans.csv'
+   path2='./output/L2VVS32KMeans.csv'
+   path3 = './output/G2VVST32KMeans.csv'
+   path4 = './output/L2VVST32KMeans.csv'
+   path5 = './output/N2VVS32KMeans.csv'
+   path6 = './output/N2VVST32KMeans.csv'
+   AUC(path1,path2)
+   AUC(path3,path4)
+   AUC(path5, path2)
+   AUC(path6, path4)
+   generaPlot(False)
+   generaPlot(True)
    df1=creaT(logName)
    disegna(df1,0,False)
    disegna(df1,1,False)
